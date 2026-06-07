@@ -7,8 +7,9 @@
 
 ---
 
-### Занимаюсь:
+### Занимаюсь
 
+| Направление | Что делаю |
 |-------------|-----------|
 | **Агенты и LLM** | Маршрутизация intent, промпты в файлах, structured JSON, фоновые workers |
 | **API** | FastAPI, async SQLAlchemy/asyncpg, Alembic, Pydantic |

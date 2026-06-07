@@ -49,7 +49,7 @@
 
 - **Разработка с AI:** Cursor, spec-driven подход, CODEMAP для навигации по коду
 - **Языки:** Python 3.11+
-- **Сейчас:** тесты и QA-панель для Closed_hub, деплой Deutsch
+- **Сейчас:** тесты и QA-панель для Closed_hub, развитие wordlist-design
 
 ---
 

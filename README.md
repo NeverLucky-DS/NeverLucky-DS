@@ -3,13 +3,12 @@
 **Python backend-разработчик** · FastAPI · PostgreSQL · LLM / агенты
 
 Делаю backend для агентских решений: REST API, async-сервисы, LLM-пайплайны, Telegram-интеграции.  
-Студент ПМИ · ищу стажировку в AI/backend.
+Студент ПМИ Финансового Университета
 
 ---
 
-### Чем занимаюсь
+### Занимаюсь:
 
-| Направление | Что делаю |
 |-------------|-----------|
 | **Агенты и LLM** | Маршрутизация intent, промпты в файлах, structured JSON, фоновые workers |
 | **API** | FastAPI, async SQLAlchemy/asyncpg, Alembic, Pydantic |
@@ -21,7 +20,7 @@
 ### Проекты
 
 #### [wordlist-design](https://github.com/NeverLucky-DS/wordlist-design)
-Немецкий словарь для essay-тренажёра: дизайн-прототип, FastAPI backend, пайплайн обогащения слов, pytest.
+Немецкий словарь для essay-тренажёра: дизайн-прототип, FastAPI backend, пайплайн пополнения базы слов (полуавтоматический), pytest.
 
 `FastAPI` · `PostgreSQL` · `pytest` · `Docker`
 
@@ -29,11 +28,6 @@
 Закрытый хаб сообщества: Telegram-бот + FastAPI веб + PostgreSQL + Mistral routing + async workers.
 
 `FastAPI` · `asyncpg` · `python-telegram-bot` · `Mistral`
-
-#### [Deutsch](https://github.com/NeverLucky-DS/Deutsch)
-Full-stack тренажёр эссе: FastAPI + PostgreSQL + React + Docker Compose + Alembic.
-
-`FastAPI` · `React` · `PostgreSQL` · `Docker`
 
 #### [Cian](https://github.com/NeverLucky-DS/Cian) · [Live demo](https://cian-viewer-shallbe.zocomputer.io)
 Пайплайн недвижимости: Playwright → PostgreSQL → CatBoost → Mistral luxury scoring → веб-viewer.

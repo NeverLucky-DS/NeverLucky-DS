@@ -25,13 +25,13 @@
 
 `FastAPI` · `PostgreSQL` · `pytest` · `Docker`
 
-#### [Closed_hub](https://github.com/NeverLucky-DS/Closed_hub)
+#### [Closed_hub](https://github.com/NeverLucky-DS/Closed_hub) · [Live demo](https://hub-ml.ru)
 Закрытый хаб сообщества: Telegram-бот + FastAPI веб + PostgreSQL + Mistral routing + async workers.
 
 `FastAPI` · `asyncpg` · `python-telegram-bot` · `Mistral`
 
-#### [Cian](https://github.com/NeverLucky-DS/Cian) · [Live demo](https://cian-viewer-shallbe.zocomputer.io)
-Пайплайн недвижимости: Playwright → PostgreSQL → CatBoost → Mistral luxury scoring → веб-viewer.
+#### [Cian](https://github.com/NeverLucky-DS/Cian)
+Пайплайн недвижимости: Playwright → PostgreSQL → CatBoost → Mistral luxury scoring → веб-viewer (viewer локально / CLI).
 
 `Playwright` · `CatBoost` · `PostgreSQL`
 

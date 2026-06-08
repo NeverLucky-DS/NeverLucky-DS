@@ -5,6 +5,8 @@
 Делаю backend для агентских решений: REST API, async-сервисы, LLM-пайплайны, Telegram-интеграции.  
 Студент ПМИ Финансового Университета
 
+**С AI работаю осознанно, не «на вайбе».** Основной инструмент — **Claude Code**; код пишу через агентов с жёстким контролем качества. Опираюсь на тренды **spec-driven** и **agentic engineering**: сначала спека и архитектура в репозитории, потом реализация агентом — с human oversight, а не бесконечными итерациями в чате. Вокруг этого — **пак из 45+ skills** под разные задачи (backend, тесты, ревью, DevOps), **MCP-подключения** к внешним сервисам, **hooks** и **глобальные rules** — чтобы контекст, стиль и процесс не терялись между сессиями.
+
 ---
 
 ### Занимаюсь
@@ -30,15 +32,20 @@
 
 `FastAPI` · `asyncpg` · `python-telegram-bot` · `Mistral`
 
+#### [jobapply](https://github.com/NeverLucky-DS/jobapply)
+Agent pipeline: поиск вакансий из нескольких источников, cover letter через Mistral, автоотклик через Playwright.
+
+`FastAPI` · `Mistral` · `Playwright` · `PostgreSQL`
+
 #### [Cian](https://github.com/NeverLucky-DS/Cian)
 Пайплайн недвижимости: Playwright → PostgreSQL → CatBoost → Mistral luxury scoring → веб-viewer (viewer локально / CLI).
 
 `Playwright` · `CatBoost` · `PostgreSQL`
 
 <details>
-<summary>Ещё проекты</summary>
+<summary>Прочее</summary>
 
-- **[jobapply](https://github.com/NeverLucky-DS/jobapply)** — agent pipeline: поиск вакансий, cover letter через Mistral, автоотклик Playwright
+- **[wb_parser](https://github.com/NeverLucky-DS/wb_parser)** — парсер скидок Wildberries
 - **Style-transfer** — NLP-нейтрализация стиля (Mistral, корпус Достоевского)
 
 </details>
@@ -47,7 +54,7 @@
 
 ### Инструменты
 
-- **Разработка с AI:** Cursor, spec-driven подход, CODEMAP для навигации по коду
+- **AI-стек:** Claude Code, Cursor · spec-driven workflows · CODEMAP · MCP · hooks · skills · global rules
 - **Языки:** Python 3.11+
 - **Сейчас:** тесты и QA-панель для Closed_hub, развитие wordlist-design
 

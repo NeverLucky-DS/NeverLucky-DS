@@ -11,20 +11,17 @@
 
 ### Занимаюсь
 
-| Направление | Что делаю |
-|-------------|-----------|
-| **Агенты и LLM** | Маршрутизация intent, промпты в файлах, structured JSON, фоновые workers |
-| **API** | FastAPI, async SQLAlchemy/asyncpg, Alembic, Pydantic |
-| **Данные** | PostgreSQL, ETL, Playwright-парсинг, Parquet |
-| **Инфра** | Docker Compose, uv, GitHub Actions |
+**Агентами и LLM** - Маршрутизация intent, промпты в файлах, structured JSON, фоновые workers
+**API** - обычно FastAPI, async SQLAlchemy/asyncpg, Alembic, Pydantic
+**Данные** - работаю в основном PostgreSQL, занимаюсь парсингом сайтов
+**Инфраструтура** - проекты через Docker, отдельные контейнеры под разные процессы
 
 ---
 
 ### Проекты
 
 #### [wordlist-design](https://github.com/NeverLucky-DS/wordlist-design)
-Немецкий словарь для essay-тренажёра: дизайн-прототип, FastAPI backend, пайплайн пополнения базы слов (полуавтоматический), pytest.
-
+Помощник в написании эссе на немецком - проверяет написанное, исправляет ошибки, предлагает новые слова к использованию и автоматически пополняет словарь
 `FastAPI` · `PostgreSQL` · `pytest` · `Docker`
 
 #### [Closed_hub](https://github.com/NeverLucky-DS/Closed_hub) · [Live demo](https://hub-ml.ru)
@@ -38,15 +35,14 @@ Agent pipeline: поиск вакансий из нескольких источ
 `FastAPI` · `Mistral` · `Playwright` · `PostgreSQL`
 
 #### [Cian](https://github.com/NeverLucky-DS/Cian)
-Пайплайн недвижимости: Playwright → PostgreSQL → CatBoost → Mistral luxury scoring → веб-viewer (viewer локально / CLI).
-
+Парсер переоцененной недвижимости Москвы, анализ цен + модель оценки рыночной цены через CatBoost
 `Playwright` · `CatBoost` · `PostgreSQL`
 
 <details>
 <summary>Прочее</summary>
 
 - **[wb_parser](https://github.com/NeverLucky-DS/wb_parser)** — парсер скидок Wildberries
-- **Style-transfer** — NLP-нейтрализация стиля (Mistral, корпус Достоевского)
+- **Style-transfer** — NLP-перенос стиля Достоевского на генерацию текста
 
 </details>
 
@@ -55,7 +51,7 @@ Agent pipeline: поиск вакансий из нескольких источ
 ### Инструменты
 
 - **AI-стек:** Claude Code, Cursor · spec-driven workflows · CODEMAP · MCP · hooks · skills · global rules
-- **Языки:** Python 3.11+
+- **Языки:** Python 3.11+, SQL
 - **Сейчас:** тесты и QA-панель для Closed_hub, развитие wordlist-design
 
 ---
@@ -67,4 +63,4 @@ Agent pipeline: поиск вакансий из нескольких источ
 
 ---
 
-<sub>Открыт к стажировкам в AI / backend</sub>
+<sub>Открыт к вашим предложениям, а главное стажировкам)</sub>

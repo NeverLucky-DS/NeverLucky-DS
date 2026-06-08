@@ -1,48 +1,51 @@
 # Кирилл Силантьев
 
-**Python backend-разработчик** · FastAPI · PostgreSQL · LLM / агенты
+**ML / Data Science** · NLP · LLM · Deep Learning · Python
 
-Делаю backend для агентских решений: REST API, async-сервисы, LLM-пайплайны, Telegram-интеграции.  
+Собираю end-to-end ML-пайплайны: ETL и парсинг → фичи → модели (CatBoost, классика) → LLM-скоринг и генерация.  
+Параллельно поднимаю сервисы на FastAPI + PostgreSQL, когда нужен продакшен-контур вокруг модели.  
 Студент ПМИ Финансового Университета
-
-**Разрабатываю проекты с интеграцией LLM** Основной инструмент — **Claude Code**; код пишу через агентов с жёстким контролем качества. Слежу за основными тенденциями использования **MCP**, **Agents**. Собрал свой **пак из 45+ скилов** под свои прикладные задачи (backend, тесты, ревью кода, DevOps) с указанием модели поведения LLM и проверенными источниками, кроме этого использую **хуки** и **глобальные правила** — чтобы контекст, стиль и процесс не терялись между сессиями.
 
 ---
 
 ### Занимаюсь
 
-**Агентами и LLM** - Маршрутизация intent, промпты в файлах, structured JSON, фоновые workers
-**API** - обычно FastAPI, async SQLAlchemy/asyncpg, Alembic, Pydantic
-**Данные** - работаю в основном PostgreSQL, занимаюсь парсингом сайтов
-**Инфраструтура** - проекты через Docker, отдельные контейнеры под разные процессы
+| Направление | Что делаю |
+|-------------|-----------|
+| **ML / DS** | CatBoost, регрессия и скоринг, batch LLM inference, оценка качества |
+| **NLP / LLM** | Промпты, structured JSON, RAG-подобные пайплайны, анализ текста |
+| **Данные** | PostgreSQL, ETL, Playwright-парсинг, Parquet, DVC |
+| **Сервинг** | FastAPI, Docker, async Python — обёртка вокруг моделей и агентов |
 
 ---
 
 ### Проекты
 
+#### [Cian](https://github.com/NeverLucky-DS/Cian)
+ML-пайплайн недвижимости: парсинг → PostgreSQL → CatBoost (цена) → Mistral luxury scoring → viewer.
+
+`CatBoost` · `Mistral` · `PostgreSQL` · `Playwright`
+
 #### [wordlist-design](https://github.com/NeverLucky-DS/wordlist-design)
-Помощник в написании эссе на немецком - проверяет написанное, исправляет ошибки, предлагает новые слова к использованию и автоматически пополняет словарь
-`FastAPI` · `PostgreSQL` · `pytest` · `Docker`
+NLP-тренажёр немецкого: LLM-разбор эссе, тематический словарь, pipeline обогащения слов по теме.
+
+`Mistral` · `FastAPI` · `PostgreSQL` · `pytest`
 
 #### [Closed_hub](https://github.com/NeverLucky-DS/Closed_hub) · [Live demo](https://hub-ml.ru)
-Закрытый хаб сообщества: Telegram-бот + FastAPI веб + PostgreSQL + Mistral routing + async workers.
+Платформа ML-сообщества: LLM routing intent, саммари событий, HR-extract, pgvector.
 
-`FastAPI` · `asyncpg` · `python-telegram-bot` · `Mistral`
+`Mistral` · `LLM agents` · `FastAPI` · `PostgreSQL`
 
 #### [jobapply](https://github.com/NeverLucky-DS/jobapply)
-Agent pipeline: поиск вакансий из нескольких источников, cover letter через Mistral, автоотклик через Playwright.
+LLM-агент для откликов на ML/DS вакансии: поиск → фильтр → Mistral cover letter → Playwright.
 
-`FastAPI` · `Mistral` · `Playwright` · `PostgreSQL`
-
-#### [Cian](https://github.com/NeverLucky-DS/Cian)
-Парсер переоцененной недвижимости Москвы, анализ цен + модель оценки рыночной цены через CatBoost
-`Playwright` · `CatBoost` · `PostgreSQL`
+`Mistral` · `LLM` · `Playwright` · `FastAPI`
 
 <details>
 <summary>Прочее</summary>
 
-- **[wb_parser](https://github.com/NeverLucky-DS/wb_parser)** — парсер скидок Wildberries
-- **Style-transfer** — NLP-перенос стиля Достоевского на генерацию текста
+- **[wb_parser](https://github.com/NeverLucky-DS/wb_parser)** — парсер и аналитика скидок Wildberries
+- **Style-transfer** — NLP-нейтрализация стиля (Mistral, корпус Достоевского)
 
 </details>
 
@@ -50,9 +53,10 @@ Agent pipeline: поиск вакансий из нескольких источ
 
 ### Инструменты
 
-- **AI-стек:** Claude Code, Cursor · spec-driven workflows · CODEMAP · MCP · hooks · skills · global rules
-- **Языки:** Python 3.11+, SQL
-- **Сейчас:** тесты и QA-панель для Closed_hub, развитие wordlist-design
+- **ML:** scikit-learn, CatBoost, pandas, Jupyter, DVC
+- **LLM:** Mistral API, batch scoring, prompt engineering
+- **Стек:** Python 3.11+, SQL, Docker, uv, GitHub Actions
+- **Разработка:** Cursor, Claude Code, spec-driven workflows
 
 ---
 
@@ -63,4 +67,4 @@ Agent pipeline: поиск вакансий из нескольких источ
 
 ---
 
-<sub>Открыт к вашим предложениям, а главное стажировкам)</sub>
+<sub>Открыт к стажировкам и проектам в ML / Data Science / NLP</sub>

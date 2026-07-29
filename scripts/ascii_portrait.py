@@ -336,13 +336,14 @@ def render(grid: list[list[str]], mask: np.ndarray, accent, alt: str) -> str:
 
     css = f".p{{fill:var(--ink)}}text{{font-size:{num(FONT)}px}}"
     if accent is not None:
-        # на белом цвет берём как есть, на тёмном поднимаем яркость,
-        # иначе бордовый сливается с фоном
+        # на белом цвет берём как есть, на тёмном поднимаем яркость, иначе
+        # бордовый сливается с фоном. Цвет ставим прямо в правило, а не
+        # через свою CSS-переменную: часть рендереров разбирает только
+        # первый :root в файле, и акцент у них терял цвет
         css += (
-            f":root{{--tint:{_shift(accent, 0.46, 1.0)}}}"
+            f".a{{fill:{_shift(accent, 0.46, 1.0)}}}"
             "@media(prefers-color-scheme:dark)"
-            f"{{:root{{--tint:{_shift(accent, 0.74, 0.88)}}}}}"
-            ".a{fill:var(--tint)}"
+            f"{{.a{{fill:{_shift(accent, 0.74, 0.88)}}}}}"
         )
     svg = document(width, height, "".join(clips) + "".join(body), css)
     return svg.replace(

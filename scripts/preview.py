@@ -8,6 +8,10 @@
 Проигрывать SMIL никто из них не умеет, но <set> на нулевой секунде
 некоторые применяют — и картинка выходит пустой. Поэтому перед растром
 эти <set> вырезаются: на PNG попадает последний кадр анимации.
+
+QuickLook — запасной вариант и рисует не всё: цветные акценты портрета
+он теряет. Если важен точный кадр, поставьте cairosvg или librsvg,
+а иначе смотрите SVG прямо в браузере.
 """
 
 from __future__ import annotations
@@ -118,7 +122,8 @@ def main() -> None:
             continue
         dst = os.path.join(out, os.path.basename(name)[:-4] + ".png")
         engine = render(src, dst)
-        print(f"  -> preview/{os.path.basename(dst)}  ({engine})")
+        note = " — цвета приблизительны" if engine == "quicklook" else ""
+        print(f"  -> preview/{os.path.basename(dst)}  ({engine}{note})")
 
 
 if __name__ == "__main__":

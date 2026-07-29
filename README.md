@@ -89,5 +89,5 @@ LLM-агент для откликов на ML/DS вакансии: поиск �
 <img src="./hd-contacts.svg" width="620" alt="контакты"/>
 
 <samp>почта</samp> &nbsp;&nbsp;&nbsp;·&nbsp; [kirill_silantev2@mail.ru](mailto:kirill_silantev2@mail.ru)<br>
-<samp>telegram</samp> &nbsp;·&nbsp; [@Shall_be](https://t.me/Shall_be)<br>
+<samp>telegram</samp> ·&nbsp; [@Shall_be](https://t.me/Shall_be)<br>
 <samp>github</samp> &nbsp;&nbsp;·&nbsp; [NeverLucky-DS](https://github.com/NeverLucky-DS)

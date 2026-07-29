@@ -1,9 +1,10 @@
-"""ascii.svg — портрет из аватарки, набранный символами.
+"""ascii.svg — портрет, набранный символами.
 
-Аватарка качается во время прогона с github.com/<логин>.png, поэтому
-портрет обновляется сам, если сменить её в профиле. Ровный фон вырезается
-заливкой от краёв: всё, что дотягивается до рамки в пределах допуска по
-цвету, считается фоном и не рисуется вовсе.
+Исходник — portrait.png рядом с README, а если его нет, аватарка
+профиля: она качается во время прогона с github.com/<логин>.png, так что
+портрет обновится сам после её смены. Ровный фон вырезается заливкой от
+краёв: всё, что дотягивается до рамки в пределах допуска по цвету,
+считается фоном и не рисуется вовсе.
 
 Координата каждого символа проставлена явно (x-список у <text>), а не
 через один textLength на строку — сетка не поедет от того, какой
@@ -18,11 +19,11 @@ import sys
 
 import numpy as np
 import requests
-from PIL import Image, ImageFilter, ImageOps
+from PIL import Image, ImageFilter
 
 from common import MONO, document, hidden_until, num, xlist
 
-COLS = 92  # символов в ширину
+COLS = 112  # символов в ширину
 CELL = 6.0  # шаг по горизонтали
 LINE = 12.0  # шаг по строкам
 FONT = CELL / 0.6  # у моноширинных шрифтов ширина знака = 0.6em
@@ -30,7 +31,7 @@ PAD = 14.0
 
 RAMP = ".`':-=+*csS#%@"  # от «еле видно» к «залито»
 
-WORK = 384  # размер, на котором ищем фон
+WORK = 640  # размер, на котором ищем фон и считаем тон
 TOL = 34.0  # допуск по цвету для заливки фона
 COVER_MIN = 0.35  # ниже этой доли непрозрачности символ не рисуем
 ROW_DUR = 0.06  # сколько «печатается» одна строка
@@ -119,21 +120,48 @@ def crop_box(img: Image.Image) -> Image.Image:
     )
 
 
-def tone(work: Image.Image, fore: np.ndarray) -> np.ndarray:
-    """Яркость 0..1, растянутая так, чтобы рамп использовался целиком."""
-    gray = work.convert("L").filter(
-        ImageFilter.UnsharpMask(radius=2, percent=70, threshold=2)
-    )
-    # фотографии почти всегда сидят в узком диапазоне: подмешиваем эквализацию
-    gray = Image.blend(gray, ImageOps.equalize(gray), 0.65)
+FLAT_MIX = 0.7  # доля «выровненной» яркости против исходной
+GAMMA = 1.7  # >1 — светлее, лицо уходит в разреженную часть рампа
 
+
+def tone(work: Image.Image, fore: np.ndarray) -> np.ndarray:
+    """Яркость 0..1, подготовленная под рамп.
+
+    Портрет освещён неровно, и этот перепад через весь кадр крупнее любой
+    черты лица: после обычной нормировки одна щека уходит в плотные
+    символы, вторая в пустоту, а глаза и рот теряются между ними. Поэтому
+    низкие частоты (сам перепад) вычитаются, а средний уровень
+    возвращается на место — остаётся то, что рампу и нужно рисовать.
+
+    Размывать приходится по картинке, где фон заменён средним по силуэту:
+    иначе белое поле затекает под контур и по краю лица появляется кайма.
+    """
+    gray = work.convert("L").filter(
+        ImageFilter.UnsharpMask(radius=2, percent=80, threshold=1)
+    )
     plane = np.asarray(gray, dtype=np.float32) / 255.0
-    visible = plane[fore > 0.5]
-    if visible.size:
-        low, high = np.percentile(visible, (1.0, 99.0))
-        if high - low > 1e-3:
-            plane = np.clip((plane - low) / (high - low), 0.0, 1.0)
-    return plane
+
+    inside = fore > 0.5
+    if inside.sum() < 64:
+        return plane
+
+    mean = float(plane[inside].mean())
+    filled = Image.fromarray(
+        np.clip(np.where(inside, plane, mean) * 255.0, 0, 255).astype(np.uint8)
+    )
+    low_freq = (
+        np.asarray(
+            filled.filter(ImageFilter.GaussianBlur(work.width / 9.6)),
+            dtype=np.float32,
+        )
+        / 255.0
+    )
+    plane = FLAT_MIX * (plane - low_freq + mean) + (1.0 - FLAT_MIX) * plane
+
+    low, high = np.percentile(plane[inside], (1.5, 98.5))
+    if high - low > 1e-3:
+        plane = np.clip((plane - low) / (high - low), 0.0, 1.0)
+    return np.clip(plane, 0.0, 1.0)
 
 
 def _box_resize(plane: np.ndarray, cols: int, rows: int) -> np.ndarray:
@@ -158,7 +186,7 @@ def to_grid(img: Image.Image, cols: int = COLS) -> list[list[str]]:
     lit = _box_resize(gray * fore, cols, rows)
     shade = np.where(cover > 1e-3, lit / np.maximum(cover, 1e-3), 1.0)
 
-    ink = np.clip(1.0 - shade, 0.0, 1.0) ** 0.9
+    ink = np.clip(1.0 - shade, 0.0, 1.0) ** GAMMA
     level = np.rint(ink * (len(RAMP) - 1)).astype(int)
     level = np.clip(level, 0, len(RAMP) - 1)
 

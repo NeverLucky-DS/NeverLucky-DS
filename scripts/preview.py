@@ -5,8 +5,9 @@
 
 Складывает PNG в preview/ (папка в .gitignore). Растеризаторы пробуются
 по очереди: cairosvg, rsvg-convert, потом QuickLook (macOS, из коробки).
-SMIL ни один из них не проигрывает — поэтому все анимации в этих SVG
-устроены так, что без проигрывания видно готовый кадр.
+Проигрывать SMIL никто из них не умеет, но <set> на нулевой секунде
+некоторые применяют — и картинка выходит пустой. Поэтому перед растром
+эти <set> вырезаются: на PNG попадает последний кадр анимации.
 """
 
 from __future__ import annotations
@@ -19,6 +20,9 @@ import sys
 import tempfile
 
 SCALE = 2  # ретиновый масштаб
+
+# <set ... to="0" begin="0s"/> — то, что прячет элемент до его очереди
+HIDER = re.compile(r'<set attributeName="[^"]+" to="0" begin="0s"\s*/>')
 
 
 def size_of(path: str) -> tuple[int, int]:
@@ -79,13 +83,20 @@ def _quicklook(src: str, dst: str, width: int, height: int) -> bool:
 
 def render(src: str, dst: str) -> str:
     width, height = size_of(src)
-    for name, fn in (
-        ("cairosvg", _cairosvg),
-        ("rsvg-convert", _rsvg),
-        ("quicklook", _quicklook),
-    ):
-        if fn(src, dst, width, height):
-            return name
+    with open(src, encoding="utf-8") as handle:
+        final_frame = HIDER.sub("", handle.read())
+
+    with tempfile.TemporaryDirectory() as tmp:
+        flat = os.path.join(tmp, os.path.basename(src))
+        with open(flat, "w", encoding="utf-8") as handle:
+            handle.write(final_frame)
+        for name, fn in (
+            ("cairosvg", _cairosvg),
+            ("rsvg-convert", _rsvg),
+            ("quicklook", _quicklook),
+        ):
+            if fn(flat, dst, width, height):
+                return name
     raise SystemExit(
         "нечем растеризовать: поставьте cairosvg (pip install cairosvg) "
         "или librsvg (brew install librsvg)"

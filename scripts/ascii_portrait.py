@@ -20,7 +20,7 @@ import numpy as np
 import requests
 from PIL import Image, ImageFilter, ImageOps
 
-from common import MONO, document, num, xlist
+from common import MONO, document, hidden_until, num, xlist
 
 COLS = 92  # символов в ширину
 CELL = 6.0  # шаг по горизонтали
@@ -38,6 +38,9 @@ ROW_START = 0.08  # анимация стартует не в нуле: инач
 # «примерзает» в статичных превью, которые берут кадр на t=0
 
 
+SOURCES = ("portrait.png", "portrait.jpg", "portrait.jpeg", "portrait.webp")
+
+
 def fetch_avatar(login: str, size: int = 800) -> Image.Image:
     url = f"https://github.com/{login}.png?size={size}"
     response = requests.get(
@@ -45,6 +48,21 @@ def fetch_avatar(login: str, size: int = 800) -> Image.Image:
     )
     response.raise_for_status()
     return Image.open(io.BytesIO(response.content)).convert("RGB")
+
+
+def load_source(login: str, root: str):
+    """Портрет из репозитория, если он там лежит; иначе аватарка профиля.
+
+    Аватарка — кадр на все случаи жизни, а рампу нужен снимок по пояс
+    на ровном фоне. Поэтому исходник можно положить рядом: portrait.png
+    в корне (или свой путь в PORTRAIT_SOURCE). Нет файла — работает
+    прежняя схема, портрет обновляется вслед за аватаркой.
+    """
+    explicit = os.environ.get("PORTRAIT_SOURCE", "").strip()
+    for path in [explicit] if explicit else [os.path.join(root, n) for n in SOURCES]:
+        if path and os.path.exists(path):
+            return Image.open(path).convert("RGB"), os.path.basename(path)
+    return fetch_avatar(login), f"github.com/{login}.png"
 
 
 def background_mask(rgb: np.ndarray, tol: float = TOL) -> np.ndarray:
@@ -181,13 +199,10 @@ def render(grid: list[list[str]], alt: str) -> str:
         begin = ROW_START + index * ROW_DUR
 
         clips.append(
-            # width сразу конечная, из нуля стартует анимация — без SMIL
-            # (превью, растеризатор) картинка видна целиком, а не пустая
             f'<clipPath id="r{index}"><rect x="{num(start)}" y="{num(top)}" '
             f'height="{num(LINE)}" width="{num(end - start)}">'
-            f'<animate attributeName="width" from="0" to="{num(end - start)}" '
-            f'begin="{num(begin)}s" dur="{num(ROW_DUR)}s" fill="freeze"/>'
-            "</rect></clipPath>"
+            + hidden_until("width", begin, ROW_DUR, end - start)
+            + "</rect></clipPath>"
         )
         body.append(
             f'<g clip-path="url(#r{index})"><text class="p" '
@@ -214,11 +229,13 @@ def render(grid: list[list[str]], alt: str) -> str:
     )
 
 
-def build(login: str, out: str) -> str:
-    grid = trim(to_grid(fetch_avatar(login)))
+def build(login: str, root: str) -> str:
+    image, origin = load_source(login, root)
+    grid = trim(to_grid(image))
     svg = render(grid, f"ASCII-портрет @{login}")
-    with open(out, "w", encoding="utf-8") as handle:
+    with open(os.path.join(root, "ascii.svg"), "w", encoding="utf-8") as handle:
         handle.write(svg)
+    print(f"ascii.svg готов — из {origin}, {len(grid)} строк")
     return svg
 
 
@@ -228,9 +245,7 @@ def main() -> None:
     )
     if not login:
         raise SystemExit("нужен логин: PROFILE_LOGIN=... или аргументом")
-    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    build(login, os.path.join(root, "ascii.svg"))
-    print("ascii.svg готов")
+    build(login, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 if __name__ == "__main__":

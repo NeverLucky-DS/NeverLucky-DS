@@ -120,22 +120,34 @@ def text(
     return "".join(parts)
 
 
-def fade_in(begin: float, dur: float = 0.45, to: float = 1.0) -> str:
-    """SMIL-проявление. Скрипты GitHub из README вырезает, SMIL — нет.
+def hidden_until(attr: str, begin: float, dur: float, to: float, spline: bool = False) -> str:
+    """Появление из нуля с задержкой — и чтобы оно пережило отсутствие SMIL.
 
-    Важно: у элемента атрибут остаётся конечным (opacity=1, width=итог),
-    а из нуля стартует сама анимация. Тогда рендерер без SMIL —
-    превью в редакторе, растеризатор — покажет готовый кадр, а не пустоту.
+    У самого элемента атрибут остаётся конечным (opacity=1, width=итог):
+    рендерер без SMIL — превью в редакторе, растеризатор — покажет
+    готовый кадр, а не пустоту. Проигрывающий же сначала применит <set>
+    и обнулит атрибут, а с момента begin им управляет <animate>, который
+    стоит позже по документу и потому перебивает <set>.
+
+    Без <set> элемент был бы виден с нулевой секунды и на своей задержке
+    только моргал — то есть «печать» превращалась в рябь по готовому.
     """
+    ease = (
+        ' calcMode="spline" keySplines="0.2 0.7 0.2 1" keyTimes="0;1"'
+        if spline
+        else ""
+    )
     return (
-        f'<animate attributeName="opacity" from="0" to="{num(to)}" '
-        f'begin="{num(begin)}s" dur="{num(dur)}s" fill="freeze"/>'
+        f'<set attributeName="{attr}" to="0" begin="0s"/>'
+        f'<animate attributeName="{attr}" from="0" to="{num(to)}" '
+        f'begin="{num(begin)}s" dur="{num(dur)}s" fill="freeze"{ease}/>'
     )
 
 
-def grow(attr: str, to: float, begin: float, dur: float = 0.7, start: float = 0.0) -> str:
-    return (
-        f'<animate attributeName="{attr}" from="{num(start)}" to="{num(to)}" '
-        f'begin="{num(begin)}s" dur="{num(dur)}s" fill="freeze" '
-        'calcMode="spline" keySplines="0.2 0.7 0.2 1" keyTimes="0;1"/>'
-    )
+def fade_in(begin: float, dur: float = 0.45, to: float = 1.0) -> str:
+    """SMIL-проявление. Скрипты GitHub из README вырезает, SMIL — нет."""
+    return hidden_until("opacity", begin, dur, to)
+
+
+def grow(attr: str, to: float, begin: float, dur: float = 0.7) -> str:
+    return hidden_until(attr, begin, dur, to, spline=True)

@@ -23,7 +23,7 @@ from PIL import Image, ImageFilter
 
 from common import MONO, document, hidden_until, num, xlist
 
-COLS = 112  # символов в ширину
+COLS = 132  # символов в ширину
 CELL = 6.0  # шаг по горизонтали
 LINE = 12.0  # шаг по строкам
 FONT = CELL / 0.6  # у моноширинных шрифтов ширина знака = 0.6em
@@ -31,7 +31,7 @@ PAD = 14.0
 
 RAMP = ".`':-=+*csS#%@"  # от «еле видно» к «залито»
 
-WORK = 640  # размер, на котором ищем фон и считаем тон
+WORK = 800  # размер, на котором ищем фон и считаем тон
 TOL = 34.0  # допуск по цвету для заливки фона
 COVER_MIN = 0.35  # ниже этой доли непрозрачности символ не рисуем
 ROW_DUR = 0.06  # сколько «печатается» одна строка
@@ -164,13 +164,78 @@ def tone(work: Image.Image, fore: np.ndarray) -> np.ndarray:
     return np.clip(plane, 0.0, 1.0)
 
 
+ACCENT_SAT = 0.40  # ниже этой насыщенности цвет считаем нейтральным
+ACCENT_WARM = 95.0  # 0..95° — кожа, волосы, хаки; всё остальное цветное
+ACCENT_MIN = 10  # меньше клеток — шум, акцента нет
+
+
+def _hue(colours: np.ndarray) -> np.ndarray:
+    """Оттенок в градусах, без покомпонентных циклов."""
+    red, green, blue = colours[..., 0], colours[..., 1], colours[..., 2]
+    top = colours.max(-1)
+    spread = top - colours.min(-1)
+    lit = spread > 1e-6
+
+    from_red = lit & (top == red)
+    from_green = lit & (top == green) & ~from_red
+    from_blue = lit & ~from_red & ~from_green
+
+    hue = np.zeros_like(top)
+    hue[from_red] = ((green - blue)[from_red] / spread[from_red]) % 6.0
+    hue[from_green] = (blue - red)[from_green] / spread[from_green] + 2.0
+    hue[from_blue] = (red - green)[from_blue] / spread[from_blue] + 4.0
+    return (hue * 60.0) % 360.0
+
+
+def _denoise(mask: np.ndarray, need: int = 2) -> np.ndarray:
+    """Выбросить одиночные клетки: губы и блики — не деталь одежды."""
+    height, width = mask.shape
+    padded = np.pad(mask.astype(np.int16), 1)
+    neighbours = sum(
+        padded[1 + dy : 1 + dy + height, 1 + dx : 1 + dx + width]
+        for dy in (-1, 0, 1)
+        for dx in (-1, 0, 1)
+        if (dy, dx) != (0, 0)
+    )
+    return mask & (neighbours >= need)
+
+
+def accents(colours: np.ndarray):
+    """Клетки цветной детали одежды и её усреднённый цвет.
+
+    Портрет рисуется одним цветом, но галстук в кадре — единственное
+    по-настоящему цветное пятно, и терять его жалко. Кожа, волосы и
+    свитер укладываются в тёплый сектор оттенков; всё, что за его
+    пределами и достаточно насыщено, и есть цветная деталь.
+    """
+    top = colours.max(-1)
+    spread = top - colours.min(-1)
+    saturation = np.where(top > 1e-6, spread / np.maximum(top, 1e-6), 0.0)
+    mask = (saturation >= ACCENT_SAT) & (top > 0.12) & (_hue(colours) > ACCENT_WARM)
+    mask = _denoise(mask)
+    if mask.sum() < ACCENT_MIN:
+        return np.zeros_like(mask), None
+    return mask, np.median(colours[mask], axis=0)
+
+
+def _shift(colour: np.ndarray, value: float, saturation: float) -> str:
+    """Тот же оттенок, подогнанный по яркости и насыщенности под тему."""
+    top = float(colour.max())
+    if top < 1e-6:
+        return "#000000"
+    grey = np.full(3, top, dtype=np.float32)
+    tinted = grey + (np.asarray(colour, dtype=np.float32) - grey) * saturation
+    scaled = np.clip(tinted * (value / top), 0.0, 1.0)
+    return "#" + "".join(f"{round(float(c) * 255):02x}" for c in scaled)
+
+
 def _box_resize(plane: np.ndarray, cols: int, rows: int) -> np.ndarray:
     image = Image.fromarray(np.clip(plane * 255.0, 0, 255).astype(np.uint8))
     return np.asarray(image.resize((cols, rows), Image.Resampling.BOX), dtype=np.float32) / 255.0
 
 
-def to_grid(img: Image.Image, cols: int = COLS) -> list[list[str]]:
-    """Картинка -> прямоугольник символов (пробел = не рисуем)."""
+def to_grid(img: Image.Image, cols: int = COLS):
+    """Картинка -> (символы, маска акцента, цвет акцента). Пробел не рисуем."""
     img = crop_box(img)
     work = img.resize(
         (WORK, max(1, round(WORK * img.height / img.width))),
@@ -187,30 +252,40 @@ def to_grid(img: Image.Image, cols: int = COLS) -> list[list[str]]:
     shade = np.where(cover > 1e-3, lit / np.maximum(cover, 1e-3), 1.0)
 
     ink = np.clip(1.0 - shade, 0.0, 1.0) ** GAMMA
-    level = np.rint(ink * (len(RAMP) - 1)).astype(int)
-    level = np.clip(level, 0, len(RAMP) - 1)
+    level = np.clip(np.rint(ink * (len(RAMP) - 1)).astype(int), 0, len(RAMP) - 1)
 
-    grid = []
-    for r in range(rows):
-        line = []
-        for c in range(cols):
-            line.append(" " if cover[r, c] < COVER_MIN else RAMP[level[r, c]])
-        grid.append(line)
-    return grid
-
-
-def trim(grid: list[list[str]]) -> list[list[str]]:
-    rows = [r for r in grid if any(ch != " " for ch in r)]
-    if not rows:
-        return grid
-    left = min(next(i for i, ch in enumerate(r) if ch != " ") for r in rows)
-    right = max(
-        len(r) - next(i for i, ch in enumerate(reversed(r)) if ch != " ") for r in rows
+    colours = np.stack(
+        [
+            _box_resize(np.asarray(work, np.float32)[..., i] / 255.0 * fore, cols, rows)
+            / np.maximum(cover, 1e-3)
+            for i in range(3)
+        ],
+        axis=-1,
     )
-    return [r[left:right] for r in rows]
+    colourful, accent = accents(np.clip(colours, 0.0, 1.0))
+
+    drawn = cover >= COVER_MIN
+    grid = [
+        [RAMP[level[r, c]] if drawn[r, c] else " " for c in range(cols)]
+        for r in range(rows)
+    ]
+    return grid, (colourful & drawn), accent
 
 
-def render(grid: list[list[str]], alt: str) -> str:
+def trim(grid: list[list[str]], mask: np.ndarray):
+    rows = [i for i, r in enumerate(grid) if any(ch != " " for ch in r)]
+    if not rows:
+        return grid, mask
+    left = min(next(i for i, ch in enumerate(grid[r]) if ch != " ") for r in rows)
+    right = max(
+        len(grid[r]) - next(i for i, ch in enumerate(reversed(grid[r])) if ch != " ")
+        for r in rows
+    )
+    keep = slice(rows[0], rows[-1] + 1)
+    return [r[left:right] for r in grid[keep]], mask[keep, left:right]
+
+
+def render(grid: list[list[str]], mask: np.ndarray, accent, alt: str) -> str:
     cols = max(len(r) for r in grid)
     width = PAD * 2 + cols * CELL
     height = PAD * 2 + len(grid) * LINE
@@ -225,6 +300,7 @@ def render(grid: list[list[str]], alt: str) -> str:
         start = PAD + marks[0][0] * CELL
         end = PAD + (marks[-1][0] + 1) * CELL
         begin = ROW_START + index * ROW_DUR
+        base = num(top + LINE * 0.78)
 
         clips.append(
             f'<clipPath id="r{index}"><rect x="{num(start)}" y="{num(top)}" '
@@ -232,13 +308,21 @@ def render(grid: list[list[str]], alt: str) -> str:
             + hidden_until("width", begin, ROW_DUR, end - start)
             + "</rect></clipPath>"
         )
-        body.append(
-            f'<g clip-path="url(#r{index})"><text class="p" '
-            f'x="{xlist(PAD + c * CELL for c, _ in marks)}" '
-            f'y="{num(top + LINE * 0.78)}">'
-            + "".join(ch for _, ch in marks)
-            + "</text></g>"
-        )
+
+        runs = [("p", [m for m in marks if not mask[index, m[0]]])]
+        if accent is not None:
+            runs.append(("a", [m for m in marks if mask[index, m[0]]]))
+        body.append(f'<g clip-path="url(#r{index})">')
+        for css_class, run in runs:
+            if not run:
+                continue
+            body.append(
+                f'<text class="{css_class}" '
+                f'x="{xlist(PAD + c * CELL for c, _ in run)}" y="{base}">'
+                + "".join(ch for _, ch in run)
+                + "</text>"
+            )
+        body.append("</g>")
         # каретка, добегающая до конца строки
         body.append(
             f'<rect class="p" y="{num(top + LINE * 0.1)}" width="{num(CELL)}" '
@@ -250,7 +334,16 @@ def render(grid: list[list[str]], alt: str) -> str:
             "</rect>"
         )
 
-    css = f".p{{fill:var(--ink)}}text.p{{font-size:{num(FONT)}px}}"
+    css = f".p{{fill:var(--ink)}}text{{font-size:{num(FONT)}px}}"
+    if accent is not None:
+        # на белом цвет берём как есть, на тёмном поднимаем яркость,
+        # иначе бордовый сливается с фоном
+        css += (
+            f":root{{--tint:{_shift(accent, 0.46, 1.0)}}}"
+            "@media(prefers-color-scheme:dark)"
+            f"{{:root{{--tint:{_shift(accent, 0.74, 0.88)}}}}}"
+            ".a{fill:var(--tint)}"
+        )
     svg = document(width, height, "".join(clips) + "".join(body), css)
     return svg.replace(
         f'font-family="{MONO}">', f'font-family="{MONO}"><title>{alt}</title>', 1
@@ -259,8 +352,9 @@ def render(grid: list[list[str]], alt: str) -> str:
 
 def build(login: str, root: str) -> str:
     image, origin = load_source(login, root)
-    grid = trim(to_grid(image))
-    svg = render(grid, f"ASCII-портрет @{login}")
+    cells, colourful, accent = to_grid(image)
+    grid, mask = trim(cells, colourful)
+    svg = render(grid, mask, accent, f"ASCII-портрет @{login}")
     with open(os.path.join(root, "ascii.svg"), "w", encoding="utf-8") as handle:
         handle.write(svg)
     print(f"ascii.svg готов — из {origin}, {len(grid)} строк")

@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./ascii.svg" width="460" alt="Кирилл Силантьев"/>
+<img src="./ascii.svg" width="520" alt="Кирилл Силантьев"/>
 
 <img src="./stats.svg" width="620" alt="Контрибуции за последний год"/>
 

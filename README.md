@@ -1,70 +1,91 @@
-# Кирилл Силантьев
+<div align="center">
 
-**ML / Data Science** · NLP · LLM · Deep Learning · Python
+<img src="./ascii.svg" width="460" alt="Кирилл Силантьев"/>
 
-Собираю end-to-end ML-пайплайны: ETL и парсинг → фичи → модели (CatBoost, классика) → LLM-скоринг и генерация.  
-Параллельно поднимаю сервисы на FastAPI + PostgreSQL, когда нужен продакшен-контур вокруг модели.  
-Студент ПМИ Финансового Университета
+<img src="./stats.svg" width="620" alt="Контрибуции за последний год"/>
 
----
+[почта](mailto:kirill_silantev2@mail.ru) &nbsp;·&nbsp;
+[github](https://github.com/NeverLucky-DS) &nbsp;·&nbsp;
+[hub-ml.ru](https://hub-ml.ru)
 
-### Занимаюсь
+</div>
 
-| Направление | Что делаю |
-|-------------|-----------|
-| **ML / DS** | CatBoost, регрессия и скоринг, batch LLM inference, оценка качества |
-| **NLP / LLM** | Промпты, structured JSON, RAG-подобные пайплайны, анализ текста |
-| **Данные** | PostgreSQL, ETL, Playwright-парсинг, Parquet, DVC |
-| **Сервинг** | FastAPI, Docker, async Python — обёртка вокруг моделей и агентов |
+<img src="./hd-about.svg" width="620" alt="о себе"/>
 
----
+> Студент ПМИ Финансового университета. ML / Data Science, NLP, LLM.<br>
+> Пайплайн целиком: от парсера до модели и до сервиса вокруг неё.
 
-### Проекты
+Собираю end-to-end: парсинг и ETL → фичи → CatBoost и классика → LLM-разметка<br>
+и генерация. Когда модели нужен продакшен-контур, поднимаю его сам на FastAPI<br>
+и PostgreSQL — так живёт [Closed_hub](https://hub-ml.ru). Открыт к стажировкам<br>
+и проектам в ML / DS / NLP.
 
-#### [Cian](https://github.com/NeverLucky-DS/Cian)
-ML-пайплайн недвижимости: парсинг → PostgreSQL → CatBoost (цена) → Mistral luxury scoring → viewer.
+<img src="./hd-stack.svg" width="620" alt="стек"/>
 
-`CatBoost` · `Mistral` · `PostgreSQL` · `Playwright`
+<samp>python &nbsp; sql &nbsp; catboost &nbsp; scikit-learn &nbsp; pandas &nbsp; mistral &nbsp; fastapi &nbsp; postgres &nbsp; sqlalchemy &nbsp; playwright &nbsp; docker &nbsp; pytest &nbsp; uv</samp>
 
-#### [wordlist-design](https://github.com/NeverLucky-DS/wordlist-design)
-NLP-тренажёр немецкого: LLM-разбор эссе, тематический словарь, pipeline обогащения слов по теме.
+<img src="./hd-projects.svg" width="620" alt="проекты"/>
 
-`Mistral` · `FastAPI` · `PostgreSQL` · `pytest`
+**[Cian](https://github.com/NeverLucky-DS/Cian)** &nbsp;·&nbsp; <samp>catboost, playwright, postgres</samp><br>
+ML-пайплайн недвижимости: парсер → PostgreSQL → CatBoost на цену →<br>
+LLM-скоринг «люксовости» → просмотрщик. Данные под DVC, дампы в Parquet.
 
-#### [Closed_hub](https://github.com/NeverLucky-DS/Closed_hub) · [Live demo](https://hub-ml.ru)
-Платформа ML-сообщества: LLM routing intent, саммари событий, HR-extract, pgvector.
+**[wordlist-design](https://github.com/NeverLucky-DS/wordlist-design)** &nbsp;·&nbsp; <samp>fastapi, postgres, mistral</samp><br>
+NLP-тренажёр немецкого: LLM разбирает эссе, отдельный pipeline добирает<br>
+тематический словарь. Alembic-миграции, pytest с визуальными снапшотами.
 
-`Mistral` · `LLM agents` · `FastAPI` · `PostgreSQL`
+**[Closed_hub](https://github.com/NeverLucky-DS/Closed_hub)** &nbsp;·&nbsp; [hub-ml.ru](https://hub-ml.ru) &nbsp;·&nbsp; <samp>fastapi, postgres, telegram</samp><br>
+Платформа ML-сообщества: LLM-роутинг намерений, саммари событий,<br>
+HR-extract из резюме. Телеграм-бот и веб — на одном бэкенде.
 
-#### [jobapply](https://github.com/NeverLucky-DS/jobapply)
-LLM-агент для откликов на ML/DS вакансии: поиск → фильтр → Mistral cover letter → Playwright.
-
-`Mistral` · `LLM` · `Playwright` · `FastAPI`
+**[jobapply](https://github.com/NeverLucky-DS/jobapply)** &nbsp;·&nbsp; <samp>fastapi, mistral, playwright</samp><br>
+LLM-агент для откликов на ML/DS вакансии: поиск → фильтр → cover letter<br>
+от Mistral → отправка через Playwright.
 
 <details>
-<summary>Прочее</summary>
+<summary>прочее</summary>
 
 - **[wb_parser](https://github.com/NeverLucky-DS/wb_parser)** — парсер и аналитика скидок Wildberries
-- **Style-transfer** — NLP-нейтрализация стиля (Mistral, корпус Достоевского)
+- **[Style-transfer](https://github.com/NeverLucky-DS/Style-transfer)** — нейтрализация авторского стиля, параллельный корпус по Достоевскому
 
 </details>
 
----
+<img src="./hd-stats.svg" width="620" alt="статистика"/>
 
-### Инструменты
+<div align="center">
 
-- **ML:** scikit-learn, CatBoost, pandas, Jupyter, DVC
-- **LLM:** Mistral API, batch scoring, prompt engineering
-- **Стек:** Python 3.11+, SQL, Docker, uv, GitHub Actions
-- **Разработка:** Cursor, Claude Code, spec-driven workflows
+<img src="./streak.svg" width="620" alt="Текущая и самая длинная серия"/>
 
----
+<img src="./langs.svg" width="620" alt="Языки по объёму кода и по репозиториям"/>
 
-### Контакты
+<img src="./year.svg" width="620" alt="Последний год, один символ на день"/>
 
-[![Email](https://img.shields.io/badge/email-kirill__silantev2@mail.ru-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:kirill_silantev2@mail.ru)
-[![GitHub](https://img.shields.io/badge/GitHub-NeverLucky--DS-181717?style=flat-square&logo=github)](https://github.com/NeverLucky-DS)
+</div>
 
----
+<img src="./hd-how.svg" width="620" alt="как это сделано"/>
 
-<sub>Открыт к стажировкам и проектам в ML / Data Science / NLP</sub>
+Вся графика на странице сгенерирована, а не подтянута с чужого сервера.<br>
+`ascii.svg` — аватарка, прогнанная через символьный рамп; цифры и заголовки<br>
+рисует [ежедневный action](.github/workflows/profile.yml) прямо из GitHub GraphQL API<br>
+и коммитит только то, что изменилось.
+
+Ничего не захардкожено: логин берётся из `github.repository_owner`, аватарка<br>
+качается во время прогона — портрет обновится сам, если я её сменю. Токен<br>
+заводить не нужно, хватает встроенного `GITHUB_TOKEN`.
+
+Анимация — SMIL внутри SVG, потому что скрипты из README GitHub вырезает.<br>
+Заголовки разделов — картинки по той же причине: CSS он тоже вырезает, а иначе<br>
+свой шрифт и цвет на них не поставить. Там, где SMIL не проигрывается, каждая<br>
+анимация показывает готовый кадр, а не пустоту.
+
+Шрифт не вшит: у каждого символа портрета и `year.svg` проставлена своя<br>
+координата `x`, а не один `textLength` на строку — сетка не поедет от того,<br>
+какой моноширинный шрифт стоит у читателя.
+
+Языки считаются только по публичным репозиториям. `year.svg` использует<br>
+тот же рамп, что и портрет: `·` `:` `+` `#` `@`, от тишины к грохоту.
+
+<img src="./hd-contacts.svg" width="620" alt="контакты"/>
+
+<samp>почта</samp> &nbsp;·&nbsp; [kirill_silantev2@mail.ru](mailto:kirill_silantev2@mail.ru)<br>
+<samp>github</samp> &nbsp;·&nbsp; [NeverLucky-DS](https://github.com/NeverLucky-DS)

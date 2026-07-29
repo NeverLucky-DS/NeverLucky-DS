@@ -5,6 +5,7 @@
 <img src="./stats.svg" width="620" alt="Контрибуции за последний год"/>
 
 [почта](mailto:kirill_silantev2@mail.ru) &nbsp;·&nbsp;
+[telegram](https://t.me/Shall_be) &nbsp;·&nbsp;
 [github](https://github.com/NeverLucky-DS) &nbsp;·&nbsp;
 [hub-ml.ru](https://hub-ml.ru)
 
@@ -87,5 +88,6 @@ LLM-агент для откликов на ML/DS вакансии: поиск �
 
 <img src="./hd-contacts.svg" width="620" alt="контакты"/>
 
-<samp>почта</samp> &nbsp;·&nbsp; [kirill_silantev2@mail.ru](mailto:kirill_silantev2@mail.ru)<br>
-<samp>github</samp> &nbsp;·&nbsp; [NeverLucky-DS](https://github.com/NeverLucky-DS)
+<samp>почта</samp> &nbsp;&nbsp;&nbsp;·&nbsp; [kirill_silantev2@mail.ru](mailto:kirill_silantev2@mail.ru)<br>
+<samp>telegram</samp> &nbsp;·&nbsp; [@Shall_be](https://t.me/Shall_be)<br>
+<samp>github</samp> &nbsp;&nbsp;·&nbsp; [NeverLucky-DS](https://github.com/NeverLucky-DS)
